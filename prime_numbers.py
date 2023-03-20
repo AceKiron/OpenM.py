@@ -12,9 +12,9 @@ def prime_numbers(n):
     return primes
 
 datasetInputs = []
-datasetOutputs = prime_numbers(1000)
-for i in range(1, len(datasetOutputs) + 1):
-    datasetInputs.append([i])
+datasetOutputs = prime_numbers(2500)
+for i in range(len(datasetOutputs)):
+    datasetInputs.append([i, i + 1])
 
 model_filename = "prime_numbers.pkl"
 
@@ -28,6 +28,6 @@ model = openm.Model(
 
 model.train(
     verbose=True,
-    batchSize=50,
+    batchSize=100,
     saveEvery=500
 )

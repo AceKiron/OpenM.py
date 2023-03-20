@@ -8,8 +8,8 @@ class Node:
         raise NotImplementedError()
     
     def bigMutate(inputsLength, i=0):
-        if i < 25:
-            x = np.int64(np.floor(np.random.random() * 6))
+        if i < 30:
+            x = np.int64(np.floor(np.random.random() * 9))
         else:
             x = np.int64(np.floor(np.random.random() * 2))
         
@@ -24,7 +24,13 @@ class Node:
         elif x == 4:
             return DivideNode(Node.bigMutate(inputsLength, i + 1), Node.bigMutate(inputsLength, i + 1))
         elif x == 5:
+            return PowerNode(Node.bigMutate(inputsLength, i + 1), Node.bigMutate(inputsLength, i + 1))
+        elif x == 6:
             return NaturalLogarithmNode(Node.bigMutate(inputsLength, i + 1))
+        elif x == 7:
+            return SineNode(Node.bigMutate(inputsLength, i + 1))
+        elif x == 8:
+            return CosineNode(Node.bigMutate(inputsLength, i + 1))
 
     def mutate(self, inputsLength, mutationPower):
         raise NotImplementedError()
@@ -42,7 +48,7 @@ class StaticNumberNode(Node):
         return "StaticNumber<" + str(self.value) + ">"
 
     def mutate(self, inputsLength, mutationPower):
-        self.value += (np.random.random() - 0.5) * mutationPower * 2
+        self.value += (np.random.random() - 0.5) * mutationPower
 
     def visit(self, inputs):
         return np.full((len(inputs)), self.value, dtype=np.float64)
@@ -105,6 +111,21 @@ class DivideNode(Node):
     def visit(self, inputs):
         return self.left.visit(inputs) / self.right.visit(inputs)
 
+class PowerNode(Node):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+    
+    def __str__(self):
+        return "Power<" + str(self.left) + ";" + str(self.right) + ">"
+    
+    def mutate(self, inputsLength, mutationPower):
+        self.left.mutate(inputsLength, mutationPower)
+        self.right.mutate(inputsLength, mutationPower)
+
+    def visit(self, inputs):
+        return self.left.visit(inputs) ** self.right.visit(inputs)
+
 class NaturalLogarithmNode(Node):
     def __init__(self, child):
         self.child = child
@@ -117,3 +138,29 @@ class NaturalLogarithmNode(Node):
 
     def visit(self, inputs):
         return np.log(self.child.visit(inputs))
+
+class SineNode(Node):
+    def __init__(self, child):
+        self.child = child
+
+    def __str__(self):
+        return "Sine<" + str(self.child) + ">"
+    
+    def mutate(self, inputsLength, mutationPower):
+        self.child.mutate(inputsLength, mutationPower)
+
+    def visit(self, inputs):
+        return np.sin(self.child.visit(inputs))
+
+class CosineNode(Node):
+    def __init__(self, child):
+        self.child = child
+
+    def __str__(self):
+        return "Cosine<" + str(self.child) + ">"
+    
+    def mutate(self, inputsLength, mutationPower):
+        self.child.mutate(inputsLength, mutationPower)
+
+    def visit(self, inputs):
+        return np.cos(self.child.visit(inputs))

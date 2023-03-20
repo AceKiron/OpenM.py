@@ -35,7 +35,11 @@ class Model:
             pickle.dump((self.rootNode, self.mutationPower), open(self.filename, "wb"))
 
             if verbose:
-                print("Saved")
+                print(
+                    self.dataset.data[1] - self.rootNode.visit(
+                        self.dataset.data[0]
+                    )
+                )
 
     def train(self, verbose=False, batchSize=50, saveEvery=500):
         gen = 0
@@ -78,20 +82,17 @@ class Model:
                     print(self.inaccuracy, bestOutOfBatch, self.mutationPower, gen)
                     print(newNode)
 
-                self.mutationPower *= bestOutOfBatch / self.inaccuracy
+                self.mutationPower *= .998
 
                 self.rootNode = newNode
                 self.inaccuracy = bestOutOfBatch
 
                 evolvedSinceLastSave = True
+            else:
+                self.mutationPower *= .999
             
             if gen % saveEvery == saveEvery - 1 and evolvedSinceLastSave:
                 self.save(verbose)
-                print(
-                    self.dataset.data[1] - newNode.visit(
-                        self.dataset.data[0]
-                    )
-                )
                 evolvedSinceLastSave = False
 
     def calculateInaccuracy(self, expected, actual):
