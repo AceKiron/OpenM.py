@@ -12,7 +12,7 @@ def prime_numbers(n):
     return primes
 
 datasetInputs = []
-datasetOutputs = prime_numbers(2500)
+datasetOutputs = prime_numbers(2000)
 for i in range(len(datasetOutputs)):
     datasetInputs.append([i, i + 1])
 
@@ -28,6 +28,8 @@ model = openm.Model(
 
 model.train(
     verbose=True,
-    batchSize=100,
+    batchSize=50,
     saveEvery=500
 )
+
+model.save(True)

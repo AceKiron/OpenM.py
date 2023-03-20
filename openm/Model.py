@@ -82,14 +82,14 @@ class Model:
                     print(self.inaccuracy, bestOutOfBatch, self.mutationPower, gen)
                     print(newNode)
 
-                self.mutationPower *= .998
+                self.mutationPower *= .9998
 
                 self.rootNode = newNode
                 self.inaccuracy = bestOutOfBatch
 
                 evolvedSinceLastSave = True
             else:
-                self.mutationPower *= .999
+                self.mutationPower *= .9999
             
             if gen % saveEvery == saveEvery - 1 and evolvedSinceLastSave:
                 self.save(verbose)
