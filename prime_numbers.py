@@ -16,13 +16,18 @@ datasetOutputs = prime_numbers(1000)
 for i in range(1, len(datasetOutputs) + 1):
     datasetInputs.append([i])
 
+model_filename = "prime_numbers.pkl"
+
 model = openm.Model(
     openm.Dataset(
         datasetInputs,
         datasetOutputs
-    )
+    ),
+    filename=model_filename
 )
+
 model.train(
     verbose=True,
-    batchSize=2
+    batchSize=50,
+    saveEvery=500
 )

@@ -8,8 +8,8 @@ class Node:
         raise NotImplementedError()
     
     def bigMutate(inputsLength, i=0):
-        if i < 5:
-            x = np.int64(np.floor(np.random.random() * 5))
+        if i < 25:
+            x = np.int64(np.floor(np.random.random() * 6))
         else:
             x = np.int64(np.floor(np.random.random() * 2))
         
@@ -22,6 +22,8 @@ class Node:
         elif x == 3:
             return ProductNode(Node.bigMutate(inputsLength, i + 1), Node.bigMutate(inputsLength, i + 1))
         elif x == 4:
+            return DivideNode(Node.bigMutate(inputsLength, i + 1), Node.bigMutate(inputsLength, i + 1))
+        elif x == 5:
             return NaturalLogarithmNode(Node.bigMutate(inputsLength, i + 1))
 
     def mutate(self, inputsLength, mutationPower):
@@ -40,7 +42,7 @@ class StaticNumberNode(Node):
         return "StaticNumber<" + str(self.value) + ">"
 
     def mutate(self, inputsLength, mutationPower):
-        self.value += (np.random.random() - 0.5) * mutationPower
+        self.value += (np.random.random() - 0.5) * mutationPower * 2
 
     def visit(self, inputs):
         return np.full((len(inputs)), self.value, dtype=np.float64)
@@ -56,10 +58,7 @@ class VariableNode(Node):
         self.variableIndex = np.int64(np.floor(np.random.random() * inputsLength))
 
     def visit(self, inputs):
-        a = []
-        for inp in inputs:
-            a.append(np.float64(inp[self.variableIndex]))
-        return a
+        return np.array(inputs, dtype=np.float64)[:,self.variableIndex]
 
 class SumNode(Node):
     def __init__(self, left, right):
@@ -74,10 +73,7 @@ class SumNode(Node):
         self.right.mutate(inputsLength, mutationPower)
 
     def visit(self, inputs):
-        a = []
-        for i in range(len(inputs)):
-            a.append(self.left.visit(inputs)[i] + self.right.visit(inputs)[i])
-        return a
+        return self.left.visit(inputs) + self.right.visit(inputs)
 
 class ProductNode(Node):
     def __init__(self, left, right):
@@ -92,10 +88,22 @@ class ProductNode(Node):
         self.right.mutate(inputsLength, mutationPower)
 
     def visit(self, inputs):
-        a = []
-        for i in range(len(inputs)):
-            a.append(self.left.visit(inputs)[i] * self.right.visit(inputs)[i])
-        return a
+        return self.left.visit(inputs) * self.right.visit(inputs)
+
+class DivideNode(Node):
+    def __init__(self, left, right):
+        self.left = left
+        self.right = right
+    
+    def __str__(self):
+        return "Division<" + str(self.left) + ";" + str(self.right) + ">"
+    
+    def mutate(self, inputsLength, mutationPower):
+        self.left.mutate(inputsLength, mutationPower)
+        self.right.mutate(inputsLength, mutationPower)
+
+    def visit(self, inputs):
+        return self.left.visit(inputs) / self.right.visit(inputs)
 
 class NaturalLogarithmNode(Node):
     def __init__(self, child):
