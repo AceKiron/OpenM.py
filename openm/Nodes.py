@@ -48,7 +48,7 @@ class StaticNumberNode(Node):
         return "StaticNumber<" + str(self.value) + ">"
 
     def mutate(self, inputsLength, mutationPower):
-        self.value += (np.random.random() - 0.5) * mutationPower * 1000
+        self.value += (np.random.random() - 0.5) * mutationPower
 
     def visit(self, inputs):
         return np.full((len(inputs)), self.value, dtype=np.float64)

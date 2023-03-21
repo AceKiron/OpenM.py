@@ -29,7 +29,7 @@ class Model:
                     self.dataset.data[0]
                 )
             )
-    
+            
     def save(self, verbose):
         if self.filename != None:
             pickle.dump((self.rootNode, self.mutationPower), open(self.filename, "wb"))
@@ -43,7 +43,6 @@ class Model:
 
     def train(self, verbose=False, batchSize=50, saveEvery=500):
         gen = 0
-        evolvedSinceLastSave = False
 
         while True:
             if self.inaccuracy == 0:
@@ -86,14 +85,11 @@ class Model:
 
                 self.rootNode = newNode
                 self.inaccuracy = bestOutOfBatch
-
-                evolvedSinceLastSave = True
             else:
                 self.mutationPower *= .9999
             
-            if gen % saveEvery == saveEvery - 1 and evolvedSinceLastSave:
+            if gen % saveEvery == saveEvery - 1:
                 self.save(verbose)
-                evolvedSinceLastSave = False
 
     def calculateInaccuracy(self, expected, actual):
         return np.average(

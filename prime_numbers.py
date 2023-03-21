@@ -16,7 +16,7 @@ datasetOutputs = prime_numbers(2000)
 for i in range(len(datasetOutputs)):
     datasetInputs.append([i, i + 1])
 
-model_filename = "prime_numbers.pkl"
+model_filename = "prime_numbers2.pkl"
 
 model = openm.Model(
     openm.Dataset(
@@ -26,10 +26,13 @@ model = openm.Model(
     filename=model_filename
 )
 
-model.train(
-    verbose=True,
-    batchSize=50,
-    saveEvery=500
-)
+try:
+    model.train(
+        verbose=True,
+        batchSize=50,
+        saveEvery=500
+    )
+except KeyboardInterrupt:
+    pass
 
 model.save(True)
